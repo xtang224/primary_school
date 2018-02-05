@@ -1,0 +1,16 @@
+hello.jsp.page.selectedStudent=回答这个问题的学生是:
+hello.jsp.page.doubleColon=::
+hello.jsp.page.inputAnswer=你的答案是:
+hello.jsp.prompt.updateScore=请输入学生的成绩，然后点击按钮继续
+hello.jsp.prompt.finished=或者题目已经做完，或者时间已经用完，请点击下面的链接查看成绩排序
+hello.jsp.prompt.studentByOrder=全班同学按照成绩由高到低的排列顺序是：
+hello.jsp.prompt.studentNo2=学号
+hello.jsp.prompt.trueName2=姓名
+hello.jsp.prompt.totalScore2=课堂答题总分
+hello.jsp.prompt.answerTimes=课堂答题次数
+hello.jsp.prompt.quizTimeCombine=合成考试次数
+hello.jsp.prompt.sourceCombine=合成考试来源
+hello.jsp.prompt.draw=点击这里画图
+hello.jsp.prompt.skip=如果你想先跳过这道题，可以点击这里
+hello.jsp.page.UpdateScoreDone=清理请假工作完成，我们将-2改成了-1
+hello.jsp.page.problemScore=分数
