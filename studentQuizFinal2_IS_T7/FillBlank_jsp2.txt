@@ -1,0 +1,472 @@
+<%@ include file="taglibs.jsp" %>
+
+<html:html locale="true">
+  <head>   
+    <html:base/>
+  </head>
+  <body bgcolor="white"><p>    
+
+   <html:errors/><p> 
+
+    <logic:present name="fillblankbean" scope="session">
+       <h2>
+         <bean:message key="hello.jsp.page.problem"/>
+         <bean:write name="fillblankbean" property="id" /><p>
+         <bean:write name="fillblankbean" property="type" /><p>
+         <bean:write name="fillblankbean" property="statement_1st" />  
+         <bean:write name="fillblankbean" property="statement_2nd" />         
+       </h2>
+    </logic:present>
+    
+    <%! HttpSession session = null; 
+        hello.FillBlankBean _fbb = null;
+        hello.PersonBean _pb2 = null;
+        String _hs = null;
+        String _hs_tf = null;
+        String _mhs = null;
+        String _hs_fb = null;
+        String _hs_fdb = null;
+        String _hs_m = null;
+        String _hs_tm = null;
+        int remainSeconds = 300;
+        int currentId = 0;        
+
+        java.sql.Connection myConnection = null;
+        PreparedStatement stmt = null;        
+        ResultSet rs = null;
+        String blankHint = null;
+        String strExit = null;
+        String calculatorHint = null;
+
+        String strInput = "";
+        String inputHint = "";
+        String inputHint2 = "";
+        String inputHint3 = "";
+        String tmpStr = "";
+        String tmpStr2 = "not done";
+
+        int[] angleIds;
+        int[] angleIds_One;
+        
+        int[] lineIds;
+    %>
+    <% session = request.getSession(true);     
+       _fbb = (hello.FillBlankBean)request.getAttribute(hello.Constants.FILLBLANK_KEY);
+       _pb2 = (hello.PersonBean)request.getAttribute(hello.Constants.PERSON_KEY);
+       _hs = (String)request.getAttribute(hello.Constants.HASHSET_KEY);
+       _hs_tf = (String)request.getAttribute(hello.Constants.HASHSET_TF_KEY);
+       _mhs = (String)request.getAttribute(hello.Constants.HASHSET_M_KEY);
+       _hs_fb = (String)request.getAttribute(hello.Constants.HASHSET_FB_KEY);
+       _hs_fdb = (String)request.getAttribute(hello.Constants.HASHSET_FDB_KEY); 
+       _hs_m = (String)request.getAttribute(hello.Constants.HASHSET_MY_KEY); 
+       _hs_tm = (String)request.getAttribute(hello.Constants.HASHSET_TM_KEY); 
+
+       currentId = _pb2.getCurrentProblemId();  
+ 
+       angleIds = new int[]{82,83,84,87,88,89,90,91,92,93,94,246,247,248,266,267,268,285,286,291,292,293,294,308,309,310,321,322,323,342,343,344};
+       angleIds_One = new int[]{82,83,84,87,88,89,90,91,92,93,94,246,247,248,266,267,268,291,292,293,294,321,322,323,342,343,344};
+
+       lineIds = new int[]{149,150,245,250,312,313};
+
+       try{
+          Class.forName("org.hsqldb.jdbcDriver");
+          myConnection = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost/xdb", "SA", ""); 
+          stmt = myConnection.prepareStatement("select term2 from hintMatch where term1=?");
+          stmt.clearParameters();
+          stmt.setString(1, "blank");
+          rs = stmt.executeQuery();              
+          while(rs.next()){
+             blankHint = rs.getString(1);
+          }
+
+          stmt = myConnection.prepareStatement("select term2 from hintMatch where term1=?");
+          stmt.clearParameters();
+          stmt.setString(1, "exit");
+          rs = stmt.executeQuery();              
+          while(rs.next()){
+             strExit = rs.getString(1);
+          }
+
+          stmt = myConnection.prepareStatement("select term2 from hintMatch where term1=?");
+          stmt.clearParameters();
+          stmt.setString(1, "calculator");
+          rs = stmt.executeQuery();              
+          while(rs.next()){
+             calculatorHint = rs.getString(1);
+          }
+
+          stmt = myConnection.prepareStatement("select term2 from hintMatch where term1=?");
+          stmt.clearParameters();
+          stmt.setString(1, "input");
+          rs = stmt.executeQuery();              
+          while(rs.next()){
+             strInput = rs.getString(1);
+          }
+
+          stmt = myConnection.prepareStatement("select term2 from hintMatch where term1=?");
+          stmt.clearParameters();
+          stmt.setString(1, "inputHint");
+          rs = stmt.executeQuery();              
+          while(rs.next()){
+             inputHint = rs.getString(1);
+          }
+
+          stmt = myConnection.prepareStatement("select term2 from hintMatch where term1=?");
+          stmt.clearParameters();
+          stmt.setString(1, "inputHint2");
+          rs = stmt.executeQuery();              
+          while(rs.next()){
+             inputHint2 = rs.getString(1);
+          }        
+
+          stmt = myConnection.prepareStatement("select term2 from hintMatch where term1=?");
+          stmt.clearParameters();
+          stmt.setString(1, "inputHint3");
+          rs = stmt.executeQuery();              
+          while(rs.next()){
+             inputHint3 = rs.getString(1);
+          }        
+
+          //if ((currentId>=82 && currentId<=84) || (currentId>=87 && currentId<=94) || (currentId>=246 && currentId<=248) || (currentId>=266 && currentId<=268) || (currentId>=285 && currentId<=286) || (currentId>=291 && currentId<=294) || (currentId>=308 && currentId<=310)){ 
+          if (StringSetTransfer.inGroup(angleIds, currentId)){ 
+             stmt = myConnection.prepareStatement("select solution from fillBlank2_test where id=?");
+             stmt.clearParameters();
+             stmt.setInt(1, currentId);
+             rs = stmt.executeQuery();              
+             while(rs.next()){
+                tmpStr = rs.getString(1);
+             }
+
+             stmt = myConnection.prepareStatement("update hintMatch set term2=? where term1=?");
+             stmt.clearParameters();
+             stmt.setString(1, tmpStr);
+             stmt.setString(2, "angle");
+             stmt.executeUpdate();    
+
+             stmt = myConnection.prepareStatement("select term2 from hintMatch where term1=?");
+             stmt.clearParameters();
+             stmt.setString(1, "angleHint");
+             rs = stmt.executeQuery();              
+             while(rs.next()){
+                tmpStr2 = rs.getString(1);
+             }   
+             System.out.println("inside FillBlank.jsp, tmpStr = " + tmpStr + " and tmpStr2=" + tmpStr2);   
+          }
+
+          //if (currentId==149 || currentId==150 || currentId==245 || currentId==250 || currentId==312 || currentId==313){ 
+          if (StringSetTransfer.inGroup(lineIds, currentId)){
+             stmt = myConnection.prepareStatement("select solution from fillBlank2_test where id=?");
+             stmt.clearParameters();
+             stmt.setInt(1, currentId);
+             rs = stmt.executeQuery();              
+             while(rs.next()){
+                tmpStr = rs.getString(1);
+             }
+
+             stmt = myConnection.prepareStatement("update hintMatch set term2=? where term1=?");
+             stmt.clearParameters();
+             stmt.setString(1, tmpStr);
+             stmt.setString(2, "line");
+             stmt.executeUpdate();    
+
+             stmt = myConnection.prepareStatement("select term2 from hintMatch where term1=?");
+             stmt.clearParameters();
+             stmt.setString(1, "lineHint");
+             rs = stmt.executeQuery();              
+             while(rs.next()){
+                tmpStr2 = rs.getString(1);
+             }   
+             System.out.println("inside FillBlank.jsp, tmpStr = " + tmpStr + " and tmpStr2=" + tmpStr2);   
+          }
+       }catch(Exception e){
+          e.printStackTrace();
+       }finally{
+          try { 
+             if (rs != null) rs.close();             
+             if (stmt != null) stmt.close();
+             if (myConnection != null) myConnection.close();
+          } catch (SQLException e) {
+             e.printStackTrace();
+          }
+       }    
+    %> 
+
+    <% if (currentId==69){ %>
+        <html:img page="/pic/ch3_test2_b69.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==70){ %>
+        <html:img page="/pic/ch3_test3_b70.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==71){ %>
+        <html:img page="/pic/ch3_test4_b71.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==72){ %>
+        <html:img page="/pic/ch3_test5_b72.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==73){ %>
+        <html:img page="/pic/ch3_test6_b73.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==74){ %>
+        <html:img page="/pic/ch3_test7_b74.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==75){ %>
+        <html:img page="/pic/ch3_test10_b75.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==76){ %>
+        <html:img page="/pic/ch3_test11_b76.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==77){ %>
+        <html:img page="/pic/ch3_test12_b77.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==78){ %>
+        <html:img page="/pic/ch3_test13_b78.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==79){ %>
+        <html:img page="/pic/ch3_test14_b79.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==80){ %>
+        <html:img page="/pic/ch3_test15_b80.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==81){ %>
+        <html:img page="/pic/ch3_test16_b81.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==85){ %>
+        <html:img page="/pic/ch3_test18_db55.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==95){ %>
+        <html:img page="/pic/ch3_test_extra_1.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==96){ %>
+        <html:img page="/pic/ch3_test_extra_2.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==97){ %>
+        <html:img page="/pic/ch3_test_extra_3.PNG" alt="Powered by Struts"/>
+    <% }else if (currentId==101){ %>
+        <html:img page="/pic/ch23_test_extra_1.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==102){ %>
+        <html:img page="/pic/ch23_test_extra_4.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==103){ %>
+        <html:img page="/pic/ch23_test_extra_5.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==104){ %>
+        <html:img page="/pic/ch23_test_extra_6.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==146){ %>
+        <html:img page="/pic/ch34_test1_b146_p1.PNG" alt="Powered by Struts"/><html:img page="/pic/ch34_test1_b146_p2.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==147){ %>
+        <html:img page="/pic/ch34_test1_b146_p1.PNG" alt="Powered by Struts"/><html:img page="/pic/ch34_test2_b147_p2.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==148){ %>
+        <html:img page="/pic/ch34_test1_b146_p1.PNG" alt="Powered by Struts"/><html:img page="/pic/ch34_test3_b148_p2.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==240) { %>
+       <html:img page="/pic/mid_self_test1_b240.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==241) { %>
+       <html:img page="/pic/mid_self_test2_b241.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==242) { %>
+       <html:img page="/pic/mid_self_test3_b242.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==243) { %>
+       <html:img page="/pic/mid_self_test4_b243.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==244) { %>
+       <html:img page="/pic/mid_self_test5_b244.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==251) { %>
+       <html:img page="/pic/mid_self_test11_b251.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==252) { %>
+       <html:img page="/pic/mid_self_test12_b252.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==253) { %>
+       <html:img page="/pic/mid_self_test13_b253.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==279) { %>
+       <html:img page="/pic/mid_2_test1_b279.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==282) { %>
+       <html:img page="/pic/mid_2_test5_1_b282.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==283) { %>
+       <html:img page="/pic/mid_2_test5_2_b283.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==284) { %>
+       <html:img page="/pic/mid_2_test5_3_b284.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==295) { %>
+       <html:img page="/pic/ch3_5_test1_b295.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==296) { %>
+       <html:img page="/pic/ch3_5_test2_b296.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==300) { %>
+       <html:img page="/pic/ch3_4_test3_b300.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==301) { %>
+       <html:img page="/pic/ch3_4_test4_b301.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==299) { %>
+       <html:img page="/pic/ch3_4_test1_db160.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==302) { %>
+       <html:img page="/pic/ch3_3_test1_b302.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==303) { %>
+       <html:img page="/pic/ch3_3_test2_b303.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==304) { %>
+       <html:img page="/pic/ch3_3_test3_b304.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==305) { %>
+       <html:img page="/pic/ch3_3_test4_b305.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==306) { %>
+       <html:img page="/pic/ch3_3_test5_b306.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==307) { %>
+       <html:img page="/pic/ch3_3_test6_b307.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==311) { %>
+       <html:img page="/pic/ch3_2_test2_b311.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==324) { %>
+       <html:img page="/pic/mid_s1_test1_db191.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==325) { %>
+       <html:img page="/pic/mid_s1_test2_b325.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==345) { %>
+       <html:img page="/pic/mid_s2_test1_db221.PNG" alt="Powered by Struts"/>
+    <% } else if (currentId==346) { %>
+       <html:img page="/pic/mid_s2_test2_b346.PNG" alt="Powered by Struts"/>
+    <% } %>
+
+
+    <% if (currentId>=13 && currentId<=18){ %>
+       <CENTER><H3><a href="javascript:window.open('AppletExample/CalculatorAppletApplication.html')"><%= calculatorHint%></a></H3></CENTER><P>
+    <% } %>  
+
+    <% if (StringSetTransfer.inGroup(angleIds_One, currentId)){ %>
+       <CENTER><H3><a href="javascript:window.open('AppletExample/DrawLineApplet.html')"><%= inputHint3%></a></H3></CENTER><P>
+    <% } %>
+
+    <% if (currentId==149 || currentId==150){ %>
+       <CENTER><H3><a href="javascript:window.open('AppletExample/DrawLineApplet2.html')"><%= inputHint3%></a></H3></CENTER><P>
+    <% } %>
+
+    <% if (currentId==245 || currentId==312){ %>
+       <CENTER><H3><a href="javascript:window.open('AppletExample/DrawLineApplet3.html')"><%= inputHint3%></a></H3></CENTER><P>
+    <% } %>
+
+    <% if (currentId==250){ %>
+       <CENTER><H3><a href="javascript:window.open('AppletExample/DrawLineApplet4.html')"><%= inputHint3%></a></H3></CENTER><P>
+    <% } %>
+
+    <% if (currentId>=285 && currentId<=286){ %>
+       <CENTER><H3><a href="javascript:window.open('AppletExample/DrawLineApplet5.html')"><%= inputHint3%></a></H3></CENTER><P>
+    <% } %>
+
+    <% if (currentId>=308 && currentId<=310){ %>
+       <CENTER><H3><a href="javascript:window.open('AppletExample/DrawLineApplet6.html')"><%= inputHint3%></a></H3></CENTER><P>
+    <% } %>
+
+    <% if (currentId==313){ %>
+       <CENTER><H3><a href="javascript:window.open('AppletExample/DrawLineApplet7.html')"><%= inputHint3%></a></H3></CENTER><P>
+    <% } %>
+
+    <% remainSeconds = _pb2.getRemainSeconds();
+       if (remainSeconds > 0 && _pb2.getPlanStatus().equals("not finished")){ 
+    %>
+
+    <html:form action="/SmartRandomCheck.do" >
+      <%= blankHint%>
+      <% if ((currentId>=82 && currentId<=84) || (currentId>=87 && currentId<=94) || (currentId>=149 && currentId<=150) || currentId==245 || currentId==250 || (currentId>=285 && currentId<=286) || (currentId>=291 && currentId<=294) || currentId==312 || currentId==313){  %>
+         <html:text property="tmpStr" size="16" maxlength="100" value="<%= tmpStr2%>"/><br>
+         <html:hidden property="inputAnswer" value="<%= strInput%>"/>
+      <% } else { %>
+         <html:text property="inputAnswer" size="16" maxlength="100" value="<%= strInput%>"/><br>
+      <% } %>
+      <html:hidden property="correctAnswer" value="<%= _fbb.getSolution()%>"/>
+      <html:hidden property="solution" value="<%= _fbb.getSolution()%>"/>
+      <html:hidden property="source" value="<%= _fbb.getSource()%>"/>
+      <html:hidden property="statement_1st" value="<%= _fbb.getStatement_1st()%>"/>
+      <html:hidden property="statement_2nd" value="<%= _fbb.getStatement_2nd()%>"/>
+      <html:hidden property="answeredProblems" value="<%= (new Integer(_pb2.getAnsweredProblems()).toString())%>"/>
+      <html:hidden property="correctAnswers" value="<%= (new Integer(_pb2.getCorrectAnswers()).toString())%>"/>
+      <html:hidden property="totalScore" value="<%= (new Double(_pb2.getTotalScore()).toString())%>"/>
+      <html:hidden property="correctAnswers_low" value="<%= (new Integer(_pb2.getCorrectAnswers_low()).toString())%>"/>
+      <html:hidden property="answeredProblems_low" value="<%= (new Integer(_pb2.getAnsweredProblems_low()).toString())%>"/>
+ <html:hidden property="correctAnswers_middle" value="<%= (new Integer(_pb2.getCorrectAnswers_middle()).toString())%>"/>
+ <html:hidden property="answeredProblems_middle" value="<%= (new Integer(_pb2.getAnsweredProblems_middle()).toString())%>"/>
+     <html:hidden property="correctAnswers_high" value="<%= (new Integer(_pb2.getCorrectAnswers_high()).toString())%>"/>
+     <html:hidden property="answeredProblems_high" value="<%= (new Integer(_pb2.getAnsweredProblems_high()).toString())%>"/>
+      <html:hidden property="answeredHashSet" value="<%= _hs%>"/>
+      <html:hidden property="answeredHashSet_tf" value="<%= _hs_tf%>"/>
+      <html:hidden property="answered_M_HashSet" value="<%= _mhs%>"/>
+      <html:hidden property="answeredHashSet_fb" value="<%= _hs_fb%>"/>
+      <html:hidden property="answeredHashSet_fdb" value="<%= _hs_fdb%>"/>
+      <html:hidden property="answered_MY_HashSet" value="<%= _hs_m%>"/>
+      <html:hidden property="answeredHashSet_tm" value="<%= _hs_tm%>"/>
+      <html:hidden property="userName" value="<%= _pb2.getUserName()%>"/>
+      <html:hidden property="passWord" value="<%= _pb2.getPassWord()%>"/>
+      <html:hidden property="trueName" value="<%= _pb2.getTrueName()%>"/>
+      <html:hidden property="lastType" value="<%= _pb2.getLastType()%>"/>
+      <html:hidden property="thisType" value="<%= _pb2.getThisType()%>"/>
+      <html:hidden property="continueRight" value="<%= (new Integer(_pb2.getContinueRight()).toString())%>"/>
+      <html:hidden property="continueWrong" value="<%= (new Integer(_pb2.getContinueWrong()).toString())%>"/>
+      <html:hidden property="neverHigh" value="<%= (new Boolean(_pb2.getNeverHigh()).toString())%>"/>
+      <html:hidden property="times" value="<%= _pb2.getTimes()%>"/>
+      <html:hidden property="randomNumber" value="<%= _pb2.getRandomNumber()%>"/>
+      <html:hidden property="id" value="<%= new Integer(_pb2.getCurrentProblemId()).toString() %>"/>
+      <html:hidden property="planStatus" value="<%= _pb2.getPlanStatus()%>"/>
+
+      <html:submit property="submit" value="Submit"/>
+      <html:reset/>
+    </html:form><br>
+
+    <html:form action="/SmartBlank.do" >     
+      <html:hidden property="inputAnswer" value="<%= strInput%>"/><br>
+      <html:hidden property="correctAnswer" value="<%= _fbb.getSolution()%>"/>
+      <html:hidden property="solution" value="<%= _fbb.getSolution()%>"/>
+      <html:hidden property="source" value="<%= _fbb.getSource()%>"/>
+      <html:hidden property="statement_1st" value="<%= _fbb.getStatement_1st()%>"/>
+      <html:hidden property="statement_2nd" value="<%= _fbb.getStatement_2nd()%>"/>
+      <html:hidden property="answeredProblems" value="<%= (new Integer(_pb2.getAnsweredProblems()).toString())%>"/>
+      <html:hidden property="correctAnswers" value="<%= (new Integer(_pb2.getCorrectAnswers()).toString())%>"/>
+      <html:hidden property="totalScore" value="<%= (new Double(_pb2.getTotalScore()).toString())%>"/>
+      <html:hidden property="correctAnswers_low" value="<%= (new Integer(_pb2.getCorrectAnswers_low()).toString())%>"/>
+      <html:hidden property="answeredProblems_low" value="<%= (new Integer(_pb2.getAnsweredProblems_low()).toString())%>"/>
+ <html:hidden property="correctAnswers_middle" value="<%= (new Integer(_pb2.getCorrectAnswers_middle()).toString())%>"/>
+ <html:hidden property="answeredProblems_middle" value="<%= (new Integer(_pb2.getAnsweredProblems_middle()).toString())%>"/>
+     <html:hidden property="correctAnswers_high" value="<%= (new Integer(_pb2.getCorrectAnswers_high()).toString())%>"/>
+     <html:hidden property="answeredProblems_high" value="<%= (new Integer(_pb2.getAnsweredProblems_high()).toString())%>"/>
+      <html:hidden property="answeredHashSet" value="<%= _hs%>"/>
+      <html:hidden property="answeredHashSet_tf" value="<%= _hs_tf%>"/>
+      <html:hidden property="answered_M_HashSet" value="<%= _mhs%>"/>
+      <html:hidden property="answeredHashSet_fb" value="<%= _hs_fb%>"/>
+      <html:hidden property="answeredHashSet_fdb" value="<%= _hs_fdb%>"/>
+      <html:hidden property="answered_MY_HashSet" value="<%= _hs_m%>"/>
+      <html:hidden property="answeredHashSet_tm" value="<%= _hs_tm%>"/>
+      <html:hidden property="userName" value="<%= _pb2.getUserName()%>"/>
+      <html:hidden property="passWord" value="<%= _pb2.getPassWord()%>"/>
+      <html:hidden property="trueName" value="<%= _pb2.getTrueName()%>"/>
+      <html:hidden property="lastType" value="<%= _pb2.getLastType()%>"/>
+      <html:hidden property="thisType" value="<%= _pb2.getThisType()%>"/>
+      <html:hidden property="continueRight" value="<%= (new Integer(_pb2.getContinueRight()).toString())%>"/>
+      <html:hidden property="continueWrong" value="<%= (new Integer(_pb2.getContinueWrong()).toString())%>"/>
+      <html:hidden property="neverHigh" value="<%= (new Boolean(_pb2.getNeverHigh()).toString())%>"/>
+      <html:hidden property="times" value="<%= _pb2.getTimes()%>"/>
+      <html:hidden property="randomNumber" value="<%= _pb2.getRandomNumber()%>"/>
+      <html:hidden property="id" value="<%= new Integer(_pb2.getCurrentProblemId()).toString() %>"/>
+      <html:hidden property="planStatus" value="<%= _pb2.getPlanStatus()%>"/>
+
+      <html:submit property="submit" value="<%= inputHint%>"/>
+      <html:reset/>
+
+    </html:form><br>
+
+
+    <% } else { %>
+
+      <center><h2><%= strExit%></h2></h2></center>
+        <center>
+      <html:form action="/SmartQuit.do" >     
+      <html:hidden property="answeredHashSet" value="<%= _hs%>"/>
+      <html:hidden property="answeredHashSet_tf" value="<%= _hs_tf%>"/>
+      <html:hidden property="answered_M_HashSet" value="<%= _mhs%>"/>
+      <html:hidden property="answeredHashSet_fb" value="<%= _hs_fb%>"/>
+      <html:hidden property="answeredHashSet_fdb" value="<%= _hs_fdb%>"/>
+      <html:hidden property="answered_MY_HashSet" value="<%= _hs_m%>"/>
+      <html:hidden property="answeredHashSet_tm" value="<%= _hs_tm%>"/>
+      <html:hidden property="userName" value="<%= _pb2.getUserName()%>"/>
+      <html:hidden property="passWord" value="<%= _pb2.getPassWord()%>"/>
+      <html:hidden property="trueName" value="<%= _pb2.getTrueName()%>"/>
+      <html:hidden property="source" value="<%= _pb2.getSource()%>"/>
+      <html:hidden property="answeredProblems" value="<%= (new Integer(_pb2.getAnsweredProblems()).toString())%>"/><br>
+      <html:hidden property="correctAnswers" value="<%= (new Integer(_pb2.getCorrectAnswers()).toString())%>"/>
+      <html:hidden property="totalScore" value="<%= (new Double(_pb2.getTotalScore()).toString())%>"/>
+      <html:hidden property="correctAnswers_low" value="<%= (new Integer(_pb2.getCorrectAnswers_low()).toString())%>"/>
+      <html:hidden property="answeredProblems_low" value="<%= (new Integer(_pb2.getAnsweredProblems_low()).toString())%>"/>
+ <html:hidden property="correctAnswers_middle" value="<%= (new Integer(_pb2.getCorrectAnswers_middle()).toString())%>"/>
+ <html:hidden property="answeredProblems_middle" value="<%= (new Integer(_pb2.getAnsweredProblems_middle()).toString())%>"/>
+     <html:hidden property="correctAnswers_high" value="<%= (new Integer(_pb2.getCorrectAnswers_high()).toString())%>"/>
+     <html:hidden property="answeredProblems_high" value="<%= (new Integer(_pb2.getAnsweredProblems_high()).toString())%>"/>
+      <html:hidden property="times" value="<%= _pb2.getTimes()%>"/>
+      <html:hidden property="planStatus" value="<%= _pb2.getPlanStatus()%>"/>
+  
+      <html:submit property="submit" value="Submit"/>
+      <html:reset/>
+
+    </html:form><br>
+    </center>
+
+     
+    <% } %>   
+
+    <CENTER><H3><a href="javascript:window.open('AppletExample/InputApplet2.html')"><%= inputHint2%></a></H3></CENTER><P>
+
+    <!-- <APPLET CODEBASE="AppletExample" CODE="InputApplet2.class" WIDTH=360 HEIGHT=360></APPLET>  -->
+
+    <html:img page="/struts-power.gif" alt="Powered by Struts"/>
+   
+  </body>
+</html:html>
+
+
+

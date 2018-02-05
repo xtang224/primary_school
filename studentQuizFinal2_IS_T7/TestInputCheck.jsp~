@@ -1,0 +1,19 @@
+<%@ include file="taglibs.jsp" %>
+
+<html:html locale="false">
+  <head>       
+  </head>
+  <body bgcolor="white"><p> 
+
+  <%! HttpSession session = null; 
+
+     String test = null;
+  %>
+    
+   <% session = request.getSession(true);  
+      test =  (String)request.getParameter("test");
+   %> 
+    
+   <%= test %>
+  </body>
+</html:html>

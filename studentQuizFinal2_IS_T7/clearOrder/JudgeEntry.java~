@@ -1,0 +1,104 @@
+package com.example.android.searchabledict.util;
+
+import android.os.Bundle;  
+import android.graphics.Color; 
+import android.widget.Button;  
+import android.widget.EditText;
+import android.widget.TextView; 
+import android.view.View; 
+import android.view.View.OnClickListener;  
+import android.util.Log;  
+import android.app.Activity;
+import android.graphics.Typeface; 
+import android.view.ViewGroup; 
+import android.content.Intent;
+import android.widget.LinearLayout; 
+import android.text.Editable;
+import android.widget.Toast;
+import android.widget.ImageView;
+import android.app.AlertDialog;
+import android.widget.CheckBox;
+import android.widget.CompoundButton; 
+import android.widget.CompoundButton.OnCheckedChangeListener; 
+import android.widget.RadioButton; 
+import android.widget.RadioGroup;
+
+import java.util.Random; 
+
+import android.view.Menu; 
+import android.view.MenuItem; 
+import android.os.Environment;
+import android.content.Context;
+import android.media.MediaRecorder;
+import android.media.MediaPlayer;
+
+import java.io.IOException;
+
+import android.speech.tts.TextToSpeech;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.HashMap;
+import java.util.Locale;
+
+import com.example.android.searchabledict.*;
+
+public class JudgeEntry {
+	   
+    public String statement;
+    public String solution;
+    public String source;
+    public String yourSolution = "";
+    public String time = "";
+    public String owner = "";
+    public String rightOrWrong = "";
+    public String score = "";
+    public String id = "";
+    
+    public JudgeEntry(String statement, String solution, String source){
+    	this.statement = statement;
+    	this.solution = solution;
+    	this.source = source;
+    }
+    
+    public JudgeEntry(String statement, String solution, String source, String yourSolution, String time, String owner, String rightOrWrong){
+    	this.statement = statement;
+    	this.solution = solution;
+    	this.source = source;
+    	this.yourSolution = yourSolution;
+    	this.time = time;
+    	this.owner = owner;
+    	this.rightOrWrong = rightOrWrong;
+    }
+    
+    public JudgeEntry(JudgeEntry entry, String source, String yourSolution, String time, String owner, String rightOrWrong){
+    	this.statement = entry.statement;
+    	this.solution = entry.solution;    	
+    	this.source = source;
+    	this.yourSolution = yourSolution;
+    	this.time = time;
+    	this.owner = owner;
+    	this.rightOrWrong = rightOrWrong;
+    	this.score = entry.score; 
+    	this.id = entry.id;
+    }
+    
+    public boolean equalsIgnoreOwner(JudgeEntry entry){
+    	boolean ret = true;
+    	if (!this.statement.equals(entry.statement))
+    		ret = false;
+    	if (!this.solution.equals(entry.solution))
+    		ret = false;    	
+    	return ret;
+    }
+    
+    public boolean equals(JudgeEntry entry){
+    	boolean ret = true;
+    	if (!this.statement.equals(entry.statement))
+    		ret = false;
+    	if (!this.solution.equals(entry.solution))
+    		ret = false;    	
+    	if (!this.owner.equals(entry.owner))
+    		ret = false;
+    	return ret;
+    }
+}
