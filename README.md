@@ -1,0 +1,1 @@
+In this project, using Strut, I create a Tomcat web application to help primary school students to learn maths
